@@ -1,0 +1,3 @@
+1 . activate conda env using "D:\miniconda\envs\myenv\python.exe" -m venv venv   to build your venv  {#replace path with your python path }
+2. run mlflow server : mlflow server --backend-store-uri sqlite:///mlflow.db --default-artifact-root ./artifacts --host 0.0.0.0 --port 5000
+3. Execute {mlflow_registraion.py}  file to register models on your mlflow registry 

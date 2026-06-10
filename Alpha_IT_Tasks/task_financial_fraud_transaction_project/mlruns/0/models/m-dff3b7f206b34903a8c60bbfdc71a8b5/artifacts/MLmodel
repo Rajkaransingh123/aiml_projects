@@ -1,0 +1,23 @@
+artifact_path: file:D:/Users/rajka/AlphaIT/task_financial_fraud_transaction_project/mlruns/0/models/m-dff3b7f206b34903a8c60bbfdc71a8b5/artifacts
+flavors:
+  python_function:
+    env:
+      conda: conda.yaml
+      virtualenv: python_env.yaml
+    loader_module: mlflow.sklearn
+    model_path: model.pkl
+    predict_fn: predict
+    python_version: 3.12.7
+  sklearn:
+    code: null
+    pickled_model: model.pkl
+    serialization_format: cloudpickle
+    sklearn_version: 1.5.2
+    skops_trusted_types: null
+mlflow_version: 3.13.0
+model_id: m-dff3b7f206b34903a8c60bbfdc71a8b5
+model_size_bytes: 6478354
+model_uuid: m-dff3b7f206b34903a8c60bbfdc71a8b5
+prompts: null
+run_id: a09cc51272c44f9ab94aea8848cfefaf
+utc_time_created: '2026-06-10 12:25:03.047650'
