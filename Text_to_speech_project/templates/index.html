@@ -1,0 +1,532 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Translator App</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2ecc71;
+            --error-color: #e74c3c;
+            --background-color: #f9f9f9;
+            --card-bg: #ffffff;
+            --text-color: #333333;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .card {
+            background-color: var(--card-bg);
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+
+        .upload-container {
+            text-align: center;
+            padding: 40px 20px;
+            border: 2px dashed #ccc;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background-color: rgba(52, 152, 219, 0.05);
+        }
+
+        .upload-container:hover, .upload-container.dragover {
+            border-color: var(--primary-color);
+            background-color: rgba(52, 152, 219, 0.1);
+        }
+
+        .upload-icon {
+            font-size: 60px;
+            color: var(--primary-color);
+            margin-bottom: 15px;
+        }
+
+        #file-input {
+            display: none;
+        }
+
+        .btn {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            padding: 12px 25px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: all 0.3s ease;
+            margin-top: 15px;
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-download {
+            background-color: var(--secondary-color);
+        }
+
+        .btn-download:hover {
+            background-color: #27ae60;
+        }
+
+        .btn-disabled {
+            background-color: #95a5a6;
+            cursor: not-allowed;
+        }
+
+        .btn-disabled:hover {
+            background-color: #95a5a6;
+            transform: none;
+        }
+
+        .status-container {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .progress-container {
+            height: 20px;
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 0;
+            background-color: var(--primary-color);
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .status-message {
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+
+        .file-details {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px;
+            background-color: #f5f5f5;
+            border-radius: 5px;
+            margin-top: 15px;
+        }
+
+        .file-name {
+            font-weight: 500;
+            word-break: break-all;
+        }
+
+        .error-message {
+            color: var(--error-color);
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .success-message {
+            color: var(--secondary-color);
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .download-section {
+            text-align: center;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .feature-list {
+            margin: 20px 0;
+        }
+
+        .feature-item {
+            display: flex;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .feature-icon {
+            margin-right: 15px;
+            color: var(--primary-color);
+            font-size: 20px;
+        }
+
+        .feature-text {
+            flex: 1;
+        }
+
+        .feature-title {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        /* Language selector styling */
+        .language-selector {
+            margin: 20px 0;
+            text-align: center;
+        }
+
+        .language-selector select {
+            padding: 10px 15px;
+            border-radius: 4px;
+            border: 1px solid #ddd;
+            font-size: 16px;
+            background-color: white;
+            width: 200px;
+            cursor: pointer;
+            outline: none;
+            transition: border-color 0.3s ease;
+        }
+
+        .language-selector select:focus {
+            border-color: var(--primary-color);
+        }
+
+        .language-selector label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 500;
+            color: var(--text-color);
+        }
+
+        .language-flag {
+            width: 24px;
+            height: 16px;
+            margin-right: 10px;
+            vertical-align: middle;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .card {
+                padding: 15px;
+            }
+            
+            .upload-container {
+                padding: 20px 10px;
+            }
+            
+            .upload-icon {
+                font-size: 40px;
+            }
+            
+            .btn {
+                padding: 10px 20px;
+                font-size: 14px;
+            }
+            
+            .language-selector select {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Video Translation App</h1>
+            <p class="subtitle">Upload your video to automatically transcribe and translate with voice-over</p>
+        </header>
+
+        <div class="card">
+            <div class="feature-list">
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-closed-captioning"></i>
+                    </div>
+                    <div class="feature-text">
+                        <div class="feature-title">Automatic Transcription</div>
+                        <p>Your video will be transcribed to English text with synchronized subtitles</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-language"></i>
+                    </div>
+                    <div class="feature-text">
+                        <div class="feature-title">Multiple Language Translation</div>
+                        <p>English subtitles are translated to your chosen language automatically</p>
+                    </div>
+                </div>
+                <div class="feature-item">
+                    <div class="feature-icon">
+                        <i class="fas fa-microphone-alt"></i>
+                    </div>
+                    <div class="feature-text">
+                        <div class="feature-title">Natural Voice-Over</div>
+                        <p>Translated text is converted to speech and synchronized with your video</p>
+                    </div>
+                </div>
+            </div>
+
+            <div class="language-selector">
+                <label for="target-language">Select Target Language:</label>
+                <select id="target-language">
+                    <option value="hi">Hindi (हिन्दी)</option>
+                    <option value="mr">Marathi (मराठी)</option>
+                    <option value="ta">Tamil (தமிழ்)</option>
+                    <option value="gu">Gujarati (ગુજરાતી)</option>
+                    <option value="bn">Bengali (বাংলা)</option>
+                    <option value="te">Telugu (తెలుగు)</option>
+                </select>
+            </div>
+
+            <div id="upload-container" class="upload-container">
+                <i class="fas fa-cloud-upload-alt upload-icon"></i>
+                <h3>Drag & Drop your video here</h3>
+                <p>or</p>
+                <input type="file" id="file-input" accept=".mp4,.avi,.mov,.mkv">
+                <button id="select-file-btn" class="btn">Select Video File</button>
+                <div id="file-details" class="file-details" style="display: none;">
+                    <span class="file-name" id="file-name"></span>
+                </div>
+            </div>
+
+            <div id="error-message" class="error-message"></div>
+            
+            <div id="status-container" class="status-container">
+                <p class="status-message" id="status-message">Processing your video...</p>
+                <div class="progress-container">
+                    <div class="progress-bar" id="progress-bar"></div>
+                </div>
+            </div>
+            
+            <div id="download-section" class="download-section">
+                <p class="success-message">Your video has been successfully processed!</p>
+                <button id="download-btn" class="btn btn-download">
+                    <i class="fas fa-download"></i> Download Translated Video
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM elements
+        const uploadContainer = document.getElementById('upload-container');
+        const fileInput = document.getElementById('file-input');
+        const selectFileBtn = document.getElementById('select-file-btn');
+        const fileDetails = document.getElementById('file-details');
+        const fileName = document.getElementById('file-name');
+        const errorMessage = document.getElementById('error-message');
+        const statusContainer = document.getElementById('status-container');
+        const statusMessage = document.getElementById('status-message');
+        const progressBar = document.getElementById('progress-bar');
+        const downloadSection = document.getElementById('download-section');
+        const downloadBtn = document.getElementById('download-btn');
+        const targetLanguageSelect = document.getElementById('target-language');
+
+        // Language display names
+        const languageNames = {
+            'hi': 'Hindi',
+            'mr': 'Marathi',
+            'ta': 'Tamil',
+            'gu': 'Gujarati',
+            'bn': 'Bengali',
+            'te': 'Telugu'
+        };
+
+        // Variables
+        let selectedFile = null;
+        let statusCheckInterval = null;
+        let currentFileName = '';
+        let selectedLanguage = targetLanguageSelect.value;
+
+        // Event listeners
+        selectFileBtn.addEventListener('click', () => fileInput.click());
+        
+        fileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                handleFileSelection(e.target.files[0]);
+            }
+        });
+
+        targetLanguageSelect.addEventListener('change', (e) => {
+            selectedLanguage = e.target.value;
+        });
+
+        // Drag and drop functionality
+        uploadContainer.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadContainer.classList.add('dragover');
+        });
+
+        uploadContainer.addEventListener('dragleave', () => {
+            uploadContainer.classList.remove('dragover');
+        });
+
+        uploadContainer.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadContainer.classList.remove('dragover');
+            
+            if (e.dataTransfer.files.length > 0) {
+                const file = e.dataTransfer.files[0];
+                if (isValidVideoFile(file)) {
+                    handleFileSelection(file);
+                } else {
+                    showError('Please upload a valid video file (.mp4, .avi, .mov, .mkv)');
+                }
+            }
+        });
+
+        // Handle file selection
+        function handleFileSelection(file) {
+            if (!isValidVideoFile(file)) {
+                showError('Please upload a valid video file (.mp4, .avi, .mov, .mkv)');
+                return;
+            }
+
+            selectedFile = file;
+            currentFileName = file.name;
+            
+            fileName.textContent = file.name;
+            fileDetails.style.display = 'flex';
+            errorMessage.textContent = '';
+            
+            uploadFile();
+        }
+
+        // Check if file is a valid video
+        function isValidVideoFile(file) {
+            const validTypes = ['.mp4', '.avi', '.mov', '.mkv'];
+            const extension = file.name.substring(file.name.lastIndexOf('.')).toLowerCase();
+            return validTypes.includes(extension);
+        }
+
+        // Show error message
+        function showError(message) {
+            errorMessage.textContent = message;
+            errorMessage.style.display = 'block';
+        }
+
+        // Upload file
+        function uploadFile() {
+            const formData = new FormData();
+            formData.append('file', selectedFile);
+            formData.append('target_language', selectedLanguage);
+            
+            // Reset UI state
+            statusContainer.style.display = 'block';
+            downloadSection.style.display = 'none';
+            progressBar.style.width = '0%';
+            statusMessage.textContent = 'Uploading your video...';
+            
+            fetch('/upload', {
+                method: 'POST',
+                body: formData
+            })
+            .then(response => {
+                if (!response.ok) {
+                    return response.json().then(data => {
+                        throw new Error(data.error || 'Upload failed');
+                    });
+                }
+                return response.json();
+            })
+            .then(data => {
+                // Start checking status
+                startStatusCheck();
+            })
+            .catch(error => {
+                statusContainer.style.display = 'none';
+                showError(error.message);
+            });
+        }
+
+        // Start checking status
+        function startStatusCheck() {
+            if (statusCheckInterval) {
+                clearInterval(statusCheckInterval);
+            }
+            
+            statusCheckInterval = setInterval(checkStatus, 2000);
+        }
+
+        function checkStatus() {
+            fetch('/status')
+                .then(response => response.json())
+                .then(data => {
+                    updateProgressUI(data);
+                    
+                    if (data.state === 'completed' || data.state === 'error') {
+                        clearInterval(statusCheckInterval);
+                        
+                        if (data.state === 'completed') {
+                            showDownloadSection();
+                        }
+                    }
+                })
+                .catch(error => {
+                    console.error('Error checking status:', error);
+                });
+        }
+
+        function updateProgressUI(data) {
+            statusMessage.textContent = data.message;
+            progressBar.style.width = `${data.progress}%`;
+        }
+
+        function showDownloadSection() {
+            downloadSection.style.display = 'block';
+            
+            const baseName = currentFileName.substring(0, currentFileName.lastIndexOf('.'));
+            const langName = languageNames[selectedLanguage] || selectedLanguage;
+            const downloadFileName = `${baseName}_${langName}.mp4`;
+            
+            downloadBtn.addEventListener('click', () => {
+                window.location.href = `/download/${downloadFileName}`;
+            });
+        }
+    </script>
+</body>
+</html>
